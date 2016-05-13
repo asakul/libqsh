@@ -3,6 +3,7 @@
 #define TYPES_H
 
 #include <cstdint>
+#include <iostream>
 #include <istream>
 #include <string>
 #include <cmath>
@@ -11,8 +12,26 @@ namespace qsh
 {
 	using datetime_t = int64_t; 
 
+	using TimePoint = std::pair<time_t, int>;
+
+	static const long long TimeDeltaInSeconds = (62135769600ll - 86400 * 2);
+
 	namespace helpers
 	{
+		TimePoint convertDatetimeToTimePoint(datetime_t t)
+		{
+			time_t seconds = t / 10000000 - TimeDeltaInSeconds;
+			int useconds = (t % 10000000) / 10;
+			return std::make_pair(seconds, useconds);
+		}
+
+		TimePoint convertGrowDatetimeToTimePoint(datetime_t t)
+		{
+			time_t seconds = t / 1000 - TimeDeltaInSeconds;
+			int useconds = (t % 1000) * 1000;
+			return std::make_pair(seconds, useconds);
+		}
+
 		int64_t readLeb128(std::istream& stream)
 		{
 			// From wikipedia
@@ -23,7 +42,7 @@ namespace qsh
 			while(true)
 			{
 				byte = stream.get();
-				result |= ((byte & 0x7f) << shift);
+				result |= (((uint64_t)byte & 0x7f) << shift);
 				shift += 7;
 				if((byte & 0x80) == 0)
 					break;
@@ -85,7 +104,7 @@ namespace qsh
 		int64_t value;
 		int32_t fractional; // 1e-9 parts
 
-		decimal_fixed(int64_t int_part, int32_t nano) : value(int_part), fractional(nano)
+		decimal_fixed(int64_t int_part = 0, int32_t nano = 0) : value(int_part), fractional(nano)
 		{
 		}
 
@@ -134,7 +153,6 @@ namespace qsh
 			return !(*this <= other);
 		}
 	};
-
 }
 
 #endif /* ifndef TYPES_H
