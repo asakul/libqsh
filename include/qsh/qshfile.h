@@ -8,7 +8,7 @@
 #include <vector>
 #include <chrono>
 
-#include "qsh/types.h"
+#include "types.h"
 
 namespace qsh
 {

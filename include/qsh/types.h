@@ -18,21 +18,21 @@ namespace qsh
 
 	namespace helpers
 	{
-		TimePoint convertDatetimeToTimePoint(datetime_t t)
+		inline TimePoint convertDatetimeToTimePoint(datetime_t t)
 		{
 			time_t seconds = t / 10000000 - TimeDeltaInSeconds;
 			int useconds = (t % 10000000) / 10;
 			return std::make_pair(seconds, useconds);
 		}
 
-		TimePoint convertGrowDatetimeToTimePoint(datetime_t t)
+		inline TimePoint convertGrowDatetimeToTimePoint(datetime_t t)
 		{
 			time_t seconds = t / 1000 - TimeDeltaInSeconds;
 			int useconds = (t % 1000) * 1000;
 			return std::make_pair(seconds, useconds);
 		}
 
-		int64_t readLeb128(std::istream& stream)
+		inline int64_t readLeb128(std::istream& stream)
 		{
 			// From wikipedia
 			int64_t result = 0;
@@ -57,7 +57,7 @@ namespace qsh
 			return result;
 		}
 
-		uint32_t readULeb128(std::istream& stream)
+		inline uint32_t readULeb128(std::istream& stream)
 		{
 			uint32_t result = 0;
 			int shift = 0;
@@ -72,7 +72,7 @@ namespace qsh
 			return result;
 		}
 
-		std::string readString(std::istream& stream)
+		inline std::string readString(std::istream& stream)
 		{
 			uint32_t length = readULeb128(stream);
 			std::string result(length, 0);
@@ -82,7 +82,7 @@ namespace qsh
 			return result;
 		}
 
-		int64_t readGrowing(std::istream& stream)
+		inline int64_t readGrowing(std::istream& stream)
 		{
 			uint32_t first = readULeb128(stream);
 			if(first == 268435455)
@@ -91,7 +91,7 @@ namespace qsh
 			return first;
 		}
 
-		int64_t readDatetime(std::istream& stream)
+		inline int64_t readDatetime(std::istream& stream)
 		{
 			int64_t value;
 			stream.read(reinterpret_cast<char*>(&value), 8);
